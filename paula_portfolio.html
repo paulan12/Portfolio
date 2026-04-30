@@ -1,403 +1,1095 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paula Nabil — QA Engineer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --border: #2a2a3a;
-    --accent: #00ffcc;
-    --accent2: #a78bfa;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --mono: 'Space Mono', monospace;
-    --sans: 'Syne', sans-serif;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
-
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,204,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,204,0.025) 1px, transparent 1px);
-    background-size: 44px 44px;
-    pointer-events: none; z-index: 0;
-  }
-  body::after {
-    content: '';
-    position: fixed; top: -250px; right: -250px;
-    width: 700px; height: 700px;
-    background: radial-gradient(circle, rgba(167,139,250,0.07) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 1.1rem 2.5rem;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,10,15,0.88); backdrop-filter: blur(14px);
-  }
-  .logo { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); letter-spacing: 0.04em; }
-  .logo span { color: var(--muted); }
-  nav ul { display: flex; gap: 2rem; list-style: none; }
-  nav a { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-decoration: none; letter-spacing: 0.05em; transition: color 0.2s; }
-  nav a:hover { color: var(--accent); }
-  .hire-btn {
-    font-family: var(--mono); font-size: 0.75rem; padding: 0.45rem 1rem;
-    border: 1px solid var(--accent); color: var(--accent); background: transparent;
-    text-decoration: none; border-radius: 2px; transition: background 0.2s, color 0.2s;
-  }
-  .hire-btn:hover { background: var(--accent); color: var(--bg); }
-
-  /* HERO */
-  .hero {
-    position: relative; z-index: 1;
-    min-height: 100vh; display: flex; align-items: center;
-    padding: 8rem 2.5rem 4rem; max-width: 1100px; margin: 0 auto;
-  }
-  .hero-text { max-width: 720px; }
-
-  .tag {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    font-family: var(--mono); font-size: 0.72rem; color: var(--accent);
-    border: 1px solid rgba(0,255,204,0.25); padding: 0.28rem 0.75rem;
-    border-radius: 2px; margin-bottom: 1.75rem; letter-spacing: 0.08em;
-    background: rgba(0,255,204,0.04);
-  }
-  .tag::before { content:''; width:6px;height:6px; background:var(--accent); border-radius:50%; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
-
-  .hero h1 { font-family: var(--sans); font-size: clamp(2.8rem,7vw,5.5rem); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; margin-bottom: 1.25rem; }
-  .hero h1 .name { color: var(--text); display: block; }
-  .hero h1 .role { color: transparent; -webkit-text-stroke: 1px #3a3a55; display: block; transition: -webkit-text-stroke-color 0.3s; }
-  .hero h1 .role:hover { -webkit-text-stroke-color: var(--accent2); }
-
-  .hero-desc { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); line-height: 1.9; margin-bottom: 2rem; }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary { font-family: var(--mono); font-size: 0.8rem; padding: 0.8rem 1.6rem; background: var(--accent); color: var(--bg); border: none; cursor: pointer; text-decoration: none; font-weight: 700; letter-spacing: 0.04em; border-radius: 2px; transition: opacity 0.2s, transform 0.2s; }
-  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-secondary { font-family: var(--mono); font-size: 0.8rem; padding: 0.8rem 1.6rem; background: transparent; color: var(--text); border: 1px solid var(--border); text-decoration: none; letter-spacing: 0.04em; border-radius: 2px; transition: border-color 0.2s, color 0.2s; }
-  .btn-secondary:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  .hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); }
-  .stat-num { font-size: 1.9rem; font-weight: 800; color: var(--text); display: block; line-height: 1; }
-  .stat-label { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-top: 0.25rem; letter-spacing: 0.05em; }
-
-  /* SECTIONS */
-  section { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 5rem 2.5rem; }
-  .section-label { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.6rem; }
-  h2 { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 2.5rem; color: var(--text); }
-
-  /* SKILLS */
-  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 0.9rem; }
-  .skill-card { background: var(--surface); border: 1px solid var(--border); padding: 1.1rem; border-radius: 4px; transition: border-color 0.2s, transform 0.2s; cursor: default; }
-  .skill-card:hover { border-color: var(--accent2); transform: translateY(-2px); }
-  .skill-name { font-size: 0.82rem; font-weight: 700; color: var(--text); display: block; }
-  .skill-cat { font-family: var(--mono); font-size: 0.67rem; color: var(--muted); display: block; margin-top: 0.2rem; }
-  .skill-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-bottom: 0.6rem; }
-
-  /* PROJECTS */
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-  .project-card {
-    background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; border-radius: 4px;
-    position: relative; overflow: hidden; transition: border-color 0.25s, transform 0.25s;
-  }
-  .project-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: var(--accent2); transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
-  }
-  .project-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
-  .project-card:hover::before { transform: scaleX(1); }
-
-  .project-num { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-bottom: 1rem; letter-spacing: 0.08em; }
-  .project-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; letter-spacing: -0.01em; }
-  .project-desc { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); line-height: 1.75; margin-bottom: 1.25rem; }
-  .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
-  .ptag {
-    font-family: var(--mono); font-size: 0.68rem; padding: 0.25rem 0.6rem;
-    background: rgba(167,106,255,0.1); border: 1px solid rgba(167,139,250,0.25);
-    color: var(--accent2); border-radius: 2px; letter-spacing: 0.03em;
-  }
-  .project-link {
-    font-family: var(--mono); font-size: 0.75rem; color: var(--accent);
-    text-decoration: none; letter-spacing: 0.05em;
-    display: inline-flex; align-items: center; gap: 0.4rem; transition: gap 0.2s;
-  }
-  .project-link:hover { gap: 0.7rem; }
-
-  /* EXPERIENCE */
-  .exp-card { background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; border-radius: 4px; margin-bottom: 1.2rem; position: relative; }
-  .exp-card::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent2); border-radius: 2px 0 0 2px; }
-  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
-  .exp-title { font-size: 1rem; font-weight: 700; color: var(--text); }
-  .exp-company { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
-  .exp-date { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
-  .exp-location { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 1rem; }
-  .exp-about { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); font-style: italic; margin-bottom: 1rem; padding-left: 0.75rem; border-left: 2px solid rgba(167,139,250,0.3); }
-  .exp-bullets { list-style: none; padding: 0; }
-  .exp-bullets li { font-family: var(--mono); font-size: 0.77rem; color: var(--muted); line-height: 1.7; padding: 0.3rem 0 0.3rem 1.1rem; position: relative; }
-  .exp-bullets li::before { content: '>'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
-
-  /* CERTS */
-  .certs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
-  .cert-card { background: var(--surface); border: 1px solid var(--border); padding: 1.4rem; border-radius: 4px; position: relative; overflow: hidden; }
-  .cert-card::after { content: 'ISTQB'; position: absolute; right: 1rem; top: 1rem; font-family: var(--mono); font-size: 0.6rem; color: var(--accent); border: 1px solid rgba(0,255,204,0.3); padding: 2px 6px; border-radius: 2px; letter-spacing: 0.1em; }
-  .cert-title { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
-  .cert-sub { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; }
-  .cert-code { font-family: var(--mono); font-size: 0.68rem; color: var(--accent2); }
-  .cert-date { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-top: 0.5rem; }
-
-  /* EDUCATION */
-  .edu-card { background: var(--surface); border: 1px solid var(--border); padding: 1.4rem; border-radius: 4px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
-  .edu-title { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
-  .edu-school { font-family: var(--mono); font-size: 0.8rem; color: var(--accent2); }
-  .edu-detail { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
-  .edu-date { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
-
-  /* CONTACT */
-  .contact-box {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
-    padding: 3.5rem 2rem; text-align: center; max-width: 580px; margin: 0 auto;
-  }
-  .contact-box h2 { margin-bottom: 0.75rem; }
-  .contact-sub { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
-  .social-row { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
-  .social-link { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; }
-  .social-link:hover { color: var(--accent); }
-
-  footer { position: relative; z-index: 1; text-align: center; padding: 2rem; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; }
-
-  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
-  .reveal.visible { opacity: 1; transform: none; }
-
-  @media (max-width: 700px) {
-    nav ul { display: none; }
-  }
-</style>
-</head>
-<body>
-
-<nav>
-  <div class="logo"><span>~/</span>paula_nabil</div>
-  <ul>
-    <li><a href="#skills">skills</a></li>
-    <li><a href="#projects">projects</a></li>
-    <li><a href="#experience">experience</a></li>
-    <li><a href="#certs">certs</a></li>
-    <li><a href="#contact">contact</a></li>
-  </ul>
-  <a href="mailto:Paulanabil30@gmail.com" class="hire-btn">hire_me()</a>
-</nav>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-text">
-    <div class="tag">open to opportunities</div>
-    <h1>
-      <span class="name">Paula Nabil</span>
-      <span class="role">QA Automation Engineer</span>
-    </h1>
-    <p class="hero-desc">
-      // Dual-certified ISTQB professional (CTFL v4.0 + Agile Tester).<br>
-      // Building end-to-end automation frameworks with Playwright &amp; TypeScript.<br>
-      // Ensuring quality across AI-powered platforms, APIs, and databases.
-    </p>
-    <div class="hero-actions">
-      <a href="#projects" class="btn-primary">view_projects()</a>
-      <a href="#contact" class="btn-secondary">get_in_touch()</a>
-    </div>
-    <div class="hero-stats">
-      <div>
-        <span class="stat-num">2</span>
-        <span class="stat-label">ISTQB_certs</span>
-      </div>
-      <div>
-        <span class="stat-num">E2E</span>
-        <span class="stat-label">automation_depth</span>
-      </div>
-      <div>
-        <span class="stat-num">AI</span>
-        <span class="stat-label">platform_qa</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SKILLS -->
-<section id="skills">
-  <div class="reveal">
-    <p class="section-label">// 01 — tech_stack</p>
-    <h2>Skills & Tools</h2>
-  </div>
-  <div class="skills-grid reveal">
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">Playwright</span><span class="skill-cat">automation</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">TypeScript</span><span class="skill-cat">language</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">Postman</span><span class="skill-cat">api testing</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">PostgreSQL</span><span class="skill-cat">database</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">JIRA</span><span class="skill-cat">defect tracking</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">Lens / Docker</span><span class="skill-cat">devops</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">GitHub</span><span class="skill-cat">version control</span></div>
-    <div class="skill-card"><span class="skill-dot"></span><span class="skill-name">QA Touch</span><span class="skill-cat">test management</span></div>
-  </div>
-
-  <div style="margin-top:1.5rem;" class="reveal">
-    <p style="font-family:var(--mono);font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;">// testing_types</p>
-    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Manual</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Automation</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">API Testing</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Database Testing</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">UI Testing</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Regression</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Exploratory</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Cross-Browser</span>
-      <span style="font-family:var(--mono);font-size:0.72rem;padding:0.3rem 0.7rem;background:rgba(0,255,204,0.06);border:1px solid rgba(0,255,204,0.2);color:var(--accent);border-radius:2px;">Agile QA</span>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="reveal">
-    <p class="section-label">// 02 — featured_work</p>
-    <h2>Projects</h2>
-  </div>
-  <div class="projects-grid">
-    <div class="project-card reveal">
-      <p class="project-num">project_01</p>
-      <h3 class="project-title">Playwright E2E Test Suite</h3>
-      <p class="project-desc">
-        End-to-end automation project built with Playwright that validates data integrity across the full stack — covering UI flows, API call validation against REST endpoints, and direct database checks to verify data consistency between the application layer and underlying tables.
-      </p>
-      <div class="project-tags">
-        <span class="ptag">Playwright</span>
-        <span class="ptag">TypeScript</span>
-        <span class="ptag">API Testing</span>
-        <span class="ptag">Database Testing</span>
-      </div>
-      <a href="https://github.com/paulan12" target="_blank" class="project-link">view_on_github →</a>
-    </div>
-  </div>
-</section>
-
-<!-- EXPERIENCE -->
-<section id="experience">
-  <div class="reveal">
-    <p class="section-label">// 03 — professional_experience</p>
-    <h2>Work Experience</h2>
-  </div>
-
-  <div class="exp-card reveal">
-    <div class="exp-header">
-      <div>
-        <p class="exp-title">Software Test Automation Engineer</p>
-        <p class="exp-company">Intella</p>
-      </div>
-      <span class="exp-date">Jan 2025 — Present</span>
-    </div>
-    <p class="exp-location">Cairo, Egypt · Hybrid</p>
-    <p class="exp-about">Egyptian AI and data analytics company specialising in NLP, speech recognition, and data intelligence for Arabic and regional markets.</p>
-    <ul class="exp-bullets">
-      <li>Built a Playwright-based end-to-end automation project from scratch, covering UI, API, and database testing layers — establishing a solid, maintainable framework that significantly increased test coverage and reduced manual regression effort.</li>
-      <li>Developed and executed Playwright API tests to validate REST endpoints across multiple AI-powered services, ensuring consistent response integrity and reliable data contracts.</li>
-      <li>Implemented database testing using Playwright alongside direct query validation, verifying data accuracy between the application layer and underlying databases.</li>
-      <li>Used Lens to monitor and manage containerised environments, streamlining debugging of test infrastructure during test runs.</li>
-      <li>Led API testing efforts using Postman for high-profile AI projects including JUMIA and Tawuniya, ensuring stable endpoint performance and reliable cross-domain integration.</li>
-      <li>Strengthened product quality for security-sensitive enterprise clients including Visa and Arab Bank through focused API and security testing, ensuring full compliance with enterprise-grade QA standards.</li>
-      <li>Supported AI innovation by testing and validating the Ziila AI Voice Agent, contributing to improvements in natural language response accuracy.</li>
-    </ul>
-  </div>
-</section>
-
-<!-- CERTIFICATIONS -->
-<section id="certs">
-  <div class="reveal">
-    <p class="section-label">// 04 — certifications</p>
-    <h2>Certifications</h2>
-  </div>
-  <div class="certs-grid reveal">
-    <div class="cert-card">
-      <p class="cert-title">ISTQB® Certified Tester Foundation Level, Agile Tester</p>
-      <p class="cert-sub">SECC Examination Authority</p>
-      <p class="cert-code">Code: CTFL-AT · Certificate No: 260407028</p>
-      <p class="cert-date">April 2026</p>
-    </div>
-    <div class="cert-card">
-      <p class="cert-title">ISTQB® Certified Tester Foundation Level v4</p>
-      <p class="cert-sub">SECC Examination Authority</p>
-      <p class="cert-code">Code: CTFL4 · Certificate No: 251223071</p>
-      <p class="cert-date">December 2025</p>
-    </div>
-  </div>
-</section>
-
-<!-- EDUCATION -->
-<section id="edu">
-  <div class="reveal">
-    <p class="section-label">// 05 — education</p>
-    <h2>Education</h2>
-  </div>
-  <div class="edu-card reveal">
-    <div>
-      <p class="edu-title">Bachelor of Computer Science</p>
-      <p class="edu-school">Helwan University</p>
-      <p class="edu-detail">Cairo, Egypt · GPA: 3.0</p>
-    </div>
-    <span class="edu-date">Sept 2020 — June 2024</span>
-  </div>
-  <div style="margin-top:1rem;" class="reveal">
-    <div class="exp-card" style="border-left-color: var(--accent);">
-      <p style="font-family:var(--mono);font-size:0.72rem;color:var(--accent);margin-bottom:0.5rem;">graduation_project</p>
-      <p style="font-weight:700;font-size:0.95rem;color:var(--text);margin-bottom:0.4rem;">LungsGuardian</p>
-      <p style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);line-height:1.7;">Medical report generation from X-ray image processing using vision transform and NLP. Supervised by Dr. Yasser Hifny &amp; Dr. Ahmed Hesham — June 2024.</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-box reveal">
-    <p class="section-label">// 06 — contact</p>
-    <h2>Let's Connect</h2>
-    <p class="contact-sub">
-      Looking for a detail-oriented QA Engineer who automates with Playwright,<br>
-      thinks in test cases, and cares deeply about software quality?<br>
-      Let's talk.
-    </p>
-    <a href="mailto:Paulanabil30@gmail.com" class="btn-primary">send_message()</a>
-    <div class="social-row">
-      <a href="https://github.com/paulan12" target="_blank" class="social-link">github</a>
-      <a href="https://linkedin.com/in/paula-nabil0" target="_blank" class="social-link">linkedin</a>
-      <a href="tel:+201222451242" class="social-link">+20 122 245 1242</a>
-      <a href="mailto:Paulanabil30@gmail.com" class="social-link">email</a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p>// Paula Nabil · Software Test Automation Engineer · Cairo, Egypt</p>
-</footer>
-
-<script>
-  const reveals = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 70);
-        obs.unobserve(e.target);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paula Nabil — QA Engineer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --border: #2a2a3a;
+        --accent: #00ffcc;
+        --accent2: #a78bfa;
+        --text: #e8e8f0;
+        --muted: #6b6b80;
+        --mono: "Space Mono", monospace;
+        --sans: "Syne", sans-serif;
       }
-    });
-  }, { threshold: 0.08 });
-  reveals.forEach(r => obs.observe(r));
-</script>
-</body>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 255, 204, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 204, 0.025) 1px, transparent 1px);
+        background-size: 44px 44px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        top: -250px;
+        right: -250px;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(
+          circle,
+          rgba(167, 139, 250, 0.07) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* NAV */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 1.1rem 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+        background: rgba(10, 10, 15, 0.88);
+        backdrop-filter: blur(14px);
+      }
+      .logo {
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        color: var(--accent);
+        letter-spacing: 0.04em;
+      }
+      .logo span {
+        color: var(--muted);
+      }
+      nav ul {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+      nav a {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        transition: color 0.2s;
+      }
+      nav a:hover {
+        color: var(--accent);
+      }
+      .hire-btn {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        padding: 0.45rem 1rem;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        background: transparent;
+        text-decoration: none;
+        border-radius: 2px;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .hire-btn:hover {
+        background: var(--accent);
+        color: var(--bg);
+      }
+
+      /* HERO */
+      .hero {
+        position: relative;
+        z-index: 1;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 8rem 2.5rem 4rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .hero-text {
+        max-width: 720px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--accent);
+        border: 1px solid rgba(0, 255, 204, 0.25);
+        padding: 0.28rem 0.75rem;
+        border-radius: 2px;
+        margin-bottom: 1.75rem;
+        letter-spacing: 0.08em;
+        background: rgba(0, 255, 204, 0.04);
+      }
+      .tag::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .hero h1 {
+        font-family: var(--sans);
+        font-size: clamp(2.8rem, 7vw, 5.5rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 .name {
+        color: var(--text);
+        display: block;
+      }
+      .hero h1 .role {
+        color: transparent;
+        -webkit-text-stroke: 1px #3a3a55;
+        display: block;
+        transition: -webkit-text-stroke-color 0.3s;
+      }
+      .hero h1 .role:hover {
+        -webkit-text-stroke-color: var(--accent2);
+      }
+
+      .hero-desc {
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.9;
+        margin-bottom: 2rem;
+      }
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .btn-primary {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        padding: 0.8rem 1.6rem;
+        background: var(--accent);
+        color: var(--bg);
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        border-radius: 2px;
+        transition:
+          opacity 0.2s,
+          transform 0.2s;
+      }
+      .btn-primary:hover {
+        opacity: 0.85;
+        transform: translateY(-1px);
+      }
+      .btn-secondary {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        padding: 0.8rem 1.6rem;
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+        text-decoration: none;
+        letter-spacing: 0.04em;
+        border-radius: 2px;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+      .btn-secondary:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 2.5rem;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+      }
+      .stat-num {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text);
+        display: block;
+        line-height: 1;
+      }
+      .stat-label {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        color: var(--muted);
+        margin-top: 0.25rem;
+        letter-spacing: 0.05em;
+      }
+
+      /* SECTIONS */
+      section {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 5rem 2.5rem;
+      }
+      .section-label {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        color: var(--accent);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 0.6rem;
+      }
+      h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-bottom: 2.5rem;
+        color: var(--text);
+      }
+
+      /* SKILLS */
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+        gap: 0.9rem;
+      }
+      .skill-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 1.1rem;
+        border-radius: 4px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        cursor: default;
+      }
+      .skill-card:hover {
+        border-color: var(--accent2);
+        transform: translateY(-2px);
+      }
+      .skill-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text);
+        display: block;
+      }
+      .skill-cat {
+        font-family: var(--mono);
+        font-size: 0.67rem;
+        color: var(--muted);
+        display: block;
+        margin-top: 0.2rem;
+      }
+      .skill-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-bottom: 0.6rem;
+      }
+
+      /* PROJECTS */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+      .project-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 1.75rem;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 0.25s,
+          transform 0.25s;
+      }
+      .project-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--accent2);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s;
+      }
+      .project-card:hover {
+        border-color: var(--accent2);
+        transform: translateY(-3px);
+      }
+      .project-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .project-num {
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-bottom: 1rem;
+        letter-spacing: 0.08em;
+      }
+      .project-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.01em;
+      }
+      .project-desc {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.75;
+        margin-bottom: 1.25rem;
+      }
+      .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 1.5rem;
+      }
+      .ptag {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        padding: 0.25rem 0.6rem;
+        background: rgba(167, 106, 255, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.25);
+        color: var(--accent2);
+        border-radius: 2px;
+        letter-spacing: 0.03em;
+      }
+      .project-link {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--accent);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: gap 0.2s;
+      }
+      .project-link:hover {
+        gap: 0.7rem;
+      }
+
+      /* EXPERIENCE */
+      .exp-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 1.75rem;
+        border-radius: 4px;
+        margin-bottom: 1.2rem;
+        position: relative;
+      }
+      .exp-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--accent2);
+        border-radius: 2px 0 0 2px;
+      }
+      .exp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .exp-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .exp-company {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--accent);
+      }
+      .exp-date {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .exp-location {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-bottom: 1rem;
+      }
+      .exp-about {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        font-style: italic;
+        margin-bottom: 1rem;
+        padding-left: 0.75rem;
+        border-left: 2px solid rgba(167, 139, 250, 0.3);
+      }
+      .exp-bullets {
+        list-style: none;
+        padding: 0;
+      }
+      .exp-bullets li {
+        font-family: var(--mono);
+        font-size: 0.77rem;
+        color: var(--muted);
+        line-height: 1.7;
+        padding: 0.3rem 0 0.3rem 1.1rem;
+        position: relative;
+      }
+      .exp-bullets li::before {
+        content: ">";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      /* CERTS */
+      .certs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.2rem;
+      }
+      .cert-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 1.4rem;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+      }
+      .cert-card::after {
+        content: "ISTQB";
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        font-family: var(--mono);
+        font-size: 0.6rem;
+        color: var(--accent);
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        padding: 2px 6px;
+        border-radius: 2px;
+        letter-spacing: 0.1em;
+      }
+      .cert-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+      }
+      .cert-sub {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-bottom: 0.5rem;
+      }
+      .cert-code {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        color: var(--accent2);
+      }
+      .cert-date {
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        color: var(--muted);
+        margin-top: 0.5rem;
+      }
+
+      /* EDUCATION */
+      .edu-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 1.4rem;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .edu-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.2rem;
+      }
+      .edu-school {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--accent2);
+      }
+      .edu-detail {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 0.2rem;
+      }
+      .edu-date {
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      /* CONTACT */
+      .contact-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 3.5rem 2rem;
+        text-align: center;
+        max-width: 580px;
+        margin: 0 auto;
+      }
+      .contact-box h2 {
+        margin-bottom: 0.75rem;
+      }
+      .contact-sub {
+        font-family: var(--mono);
+        font-size: 0.8rem;
+        color: var(--muted);
+        line-height: 1.8;
+        margin-bottom: 2rem;
+      }
+      .social-row {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+      .social-link {
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.06em;
+        transition: color 0.2s;
+      }
+      .social-link:hover {
+        color: var(--accent);
+      }
+
+      footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 2rem;
+        border-top: 1px solid var(--border);
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 0.55s ease,
+          transform 0.55s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (max-width: 700px) {
+        nav ul {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="logo"><span>~/</span>paula_nabil</div>
+      <ul>
+        <li><a href="#skills">skills</a></li>
+        <li><a href="#projects">projects</a></li>
+        <li><a href="#experience">experience</a></li>
+        <li><a href="#certs">certs</a></li>
+        <li><a href="#contact">contact</a></li>
+      </ul>
+      <a href="mailto:Paulanabil30@gmail.com" class="hire-btn">hire_me()</a>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-text">
+        <div class="tag">open to opportunities</div>
+        <h1>
+          <span class="name">Paula Nabil</span>
+          <span class="role">QA Automation Engineer</span>
+        </h1>
+        <p class="hero-desc">
+          // Dual-certified ISTQB professional (CTFL v4.0 + Agile Tester).<br />
+          // Building end-to-end automation frameworks with Playwright &amp;
+          TypeScript.<br />
+          // Ensuring quality across AI-powered platforms, APIs, and databases.
+        </p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn-primary">view_projects()</a>
+          <a href="#contact" class="btn-secondary">get_in_touch()</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <span class="stat-num">2</span>
+            <span class="stat-label">ISTQB_certs</span>
+          </div>
+          <div>
+            <span class="stat-num">E2E</span>
+            <span class="stat-label">automation_depth</span>
+          </div>
+          <div>
+            <span class="stat-num">AI</span>
+            <span class="stat-label">platform_qa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="reveal">
+        <p class="section-label">// 01 — tech_stack</p>
+        <h2>Skills & Tools</h2>
+      </div>
+      <div class="skills-grid reveal">
+        <div class="skill-card">
+          <span class="skill-dot"></span
+          ><span class="skill-name">Playwright</span
+          ><span class="skill-cat">automation</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span
+          ><span class="skill-name">TypeScript</span
+          ><span class="skill-cat">language</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span><span class="skill-name">Postman</span
+          ><span class="skill-cat">api testing</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span
+          ><span class="skill-name">PostgreSQL</span
+          ><span class="skill-cat">database</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span><span class="skill-name">JIRA</span
+          ><span class="skill-cat">defect tracking</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span
+          ><span class="skill-name">Lens / Docker</span
+          ><span class="skill-cat">devops</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span><span class="skill-name">GitHub</span
+          ><span class="skill-cat">version control</span>
+        </div>
+        <div class="skill-card">
+          <span class="skill-dot"></span><span class="skill-name">QA Touch</span
+          ><span class="skill-cat">test management</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem" class="reveal">
+        <p
+          style="
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+          "
+        >
+          // testing_types
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Manual</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Automation</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >API Testing</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Database Testing</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >UI Testing</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Regression</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Exploratory</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Cross-Browser</span
+          >
+          <span
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              padding: 0.3rem 0.7rem;
+              background: rgba(0, 255, 204, 0.06);
+              border: 1px solid rgba(0, 255, 204, 0.2);
+              color: var(--accent);
+              border-radius: 2px;
+            "
+            >Agile QA</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="reveal">
+        <p class="section-label">// 02 — featured_work</p>
+        <h2>Projects</h2>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card reveal">
+          <p class="project-num">project_01</p>
+          <h3 class="project-title">Playwright E2E Test Suite</h3>
+          <p class="project-desc">
+            End-to-end automation project built with Playwright that validates
+            data integrity across the full stack — covering UI flows, API call
+            validation against REST endpoints, and direct database checks to
+            verify data consistency between the application layer and underlying
+            tables.
+          </p>
+          <div class="project-tags">
+            <span class="ptag">Playwright</span>
+            <span class="ptag">TypeScript</span>
+            <span class="ptag">API Testing</span>
+            <span class="ptag">Database Testing</span>
+          </div>
+          <a
+            href="https://github.com/paulan12"
+            target="_blank"
+            class="project-link"
+            >view_on_github →</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="reveal">
+        <p class="section-label">// 03 — professional_experience</p>
+        <h2>Work Experience</h2>
+      </div>
+
+      <div class="exp-card reveal">
+        <div class="exp-header">
+          <div>
+            <p class="exp-title">Software Test Automation Engineer</p>
+            <p class="exp-company">Intella</p>
+          </div>
+          <span class="exp-date">Jan 2025 — Present</span>
+        </div>
+        <p class="exp-location">Cairo, Egypt · Hybrid</p>
+        <p class="exp-about">
+          Egyptian AI and data analytics company specialising in NLP, speech
+          recognition, and data intelligence for Arabic and regional markets.
+        </p>
+        <ul class="exp-bullets">
+          <li>
+            Built a Playwright-based end-to-end automation project from scratch,
+            covering UI, API, and database testing layers — establishing a
+            solid, maintainable framework that significantly increased test
+            coverage and reduced manual regression effort.
+          </li>
+          <li>
+            Developed and executed Playwright API tests to validate REST
+            endpoints across multiple AI-powered services, ensuring consistent
+            response integrity and reliable data contracts.
+          </li>
+          <li>
+            Implemented database testing using Playwright alongside direct query
+            validation, verifying data accuracy between the application layer
+            and underlying databases.
+          </li>
+          <li>
+            Used Lens to monitor and manage containerised environments,
+            streamlining debugging of test infrastructure during test runs.
+          </li>
+          <li>
+            Led API testing efforts using Postman for high-profile AI projects
+            including JUMIA and Tawuniya, ensuring stable endpoint performance
+            and reliable cross-domain integration.
+          </li>
+          <li>
+            Strengthened product quality for security-sensitive enterprise
+            clients including Visa and Arab Bank through focused API and
+            security testing, ensuring full compliance with enterprise-grade QA
+            standards.
+          </li>
+          <li>
+            Supported AI innovation by testing and validating the Ziila AI Voice
+            Agent, contributing to improvements in natural language response
+            accuracy.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certs">
+      <div class="reveal">
+        <p class="section-label">// 04 — certifications</p>
+        <h2>Certifications</h2>
+      </div>
+      <div class="certs-grid reveal">
+        <div class="cert-card">
+          <p class="cert-title">
+            ISTQB® Certified Tester Foundation Level, Agile Tester
+          </p>
+          <p class="cert-sub">SECC Examination Authority</p>
+          <p class="cert-code">Code: CTFL-AT · Certificate No: 260407028</p>
+          <p class="cert-date">April 2026</p>
+        </div>
+        <div class="cert-card">
+          <p class="cert-title">ISTQB® Certified Tester Foundation Level v4</p>
+          <p class="cert-sub">SECC Examination Authority</p>
+          <p class="cert-code">Code: CTFL4 · Certificate No: 251223071</p>
+          <p class="cert-date">December 2025</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="edu">
+      <div class="reveal">
+        <p class="section-label">// 05 — education</p>
+        <h2>Education</h2>
+      </div>
+      <div class="edu-card reveal">
+        <div>
+          <p class="edu-title">Bachelor of Computer Science</p>
+          <p class="edu-school">Helwan University</p>
+          <p class="edu-detail">Cairo, Egypt · GPA: 3.0</p>
+        </div>
+        <span class="edu-date">Sept 2020 — June 2024</span>
+      </div>
+      <div style="margin-top: 1rem" class="reveal">
+        <div class="exp-card" style="border-left-color: var(--accent)">
+          <p
+            style="
+              font-family: var(--mono);
+              font-size: 0.72rem;
+              color: var(--accent);
+              margin-bottom: 0.5rem;
+            "
+          >
+            graduation_project
+          </p>
+          <p
+            style="
+              font-weight: 700;
+              font-size: 0.95rem;
+              color: var(--text);
+              margin-bottom: 0.4rem;
+            "
+          >
+            LungsGuardian
+          </p>
+          <p
+            style="
+              font-family: var(--mono);
+              font-size: 0.78rem;
+              color: var(--muted);
+              line-height: 1.7;
+            "
+          >
+            Medical report generation from X-ray image processing using vision
+            transform and NLP. Supervised by Dr. Yasser Hifny &amp; Dr. Ahmed
+            Hesham — June 2024.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="contact-box reveal">
+        <p class="section-label">// 06 — contact</p>
+        <h2>Let's Connect</h2>
+        <p class="contact-sub">
+          Looking for a detail-oriented QA Engineer who automates with
+          Playwright,<br />
+          thinks in test cases, and cares deeply about software quality?<br />
+          Let's talk.
+        </p>
+        <a href="mailto:Paulanabil30@gmail.com" class="btn-primary"
+          >send_message()</a
+        >
+        <div class="social-row">
+          <a
+            href="https://github.com/paulan12"
+            target="_blank"
+            class="social-link"
+            >github</a
+          >
+          <a
+            href="https://linkedin.com/in/paula-nabil0"
+            target="_blank"
+            class="social-link"
+            >linkedin</a
+          >
+          <a href="tel:+201222451242" class="social-link">+20 122 245 1242</a>
+          <a href="mailto:Paulanabil30@gmail.com" class="social-link">email</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>// Paula Nabil · Software Test Automation Engineer · Cairo, Egypt</p>
+    </footer>
+
+    <script>
+      const reveals = document.querySelectorAll(".reveal");
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add("visible"), i * 70);
+              obs.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.08 },
+      );
+      reveals.forEach((r) => obs.observe(r));
+    </script>
+  </body>
 </html>
